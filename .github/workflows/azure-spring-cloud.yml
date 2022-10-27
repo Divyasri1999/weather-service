@@ -6,9 +6,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@main
+    - uses: actions/checkout@v2
     - name: Set up Java
-      uses: actions/checkout@main
+      uses: actions/setup-java@v2
       with:
         distribution: 'temurin'
         java-version: 17
@@ -22,7 +22,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Get Subscription ID
       run: |
-        mvn azure-spring-apps:deploy
+        echo "SUBSCRIPTION_ID=$(az account show --query id --output tsv --only-show-errors)" >> $GITHUB_ENV
       shell: bash
     - name: Deploy to Azure Spring Apps
       uses: azure/spring-cloud-deploy@v1
@@ -33,4 +33,3 @@ jobs:
         app-name: weather-service
         use-staging-deployment: false
         package: target/demo-0.0.1-SNAPSHOT.jar
-      
